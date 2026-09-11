@@ -33,12 +33,11 @@
   },
   "files": [
     "dist",
-    "examples",
     "README.md",
     "LICENSE"
   ],
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "scripts": {
     "build": "tsup src/index.ts --format esm,cjs --dts --clean",

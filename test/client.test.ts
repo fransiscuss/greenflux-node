@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { ChargeAssistClient, GreenfluxApiError } from "../src/index.js";
+import { ChargeAssistClient, GreenfluxApiError, RemoteCommandsClient } from "../src/index.js";
 
 describe("GreenfluxApiClient", () => {
   it("preserves a base URL path and encodes query parameters", async () => {
@@ -36,5 +36,33 @@ describe("GreenfluxApiClient", () => {
 
     expect(String(fetch.mock.calls[0]?.[0])).toContain("session/status?appToken=app-token&chargeSessionId=session-1&maxDataPoints=15");
     expect(fetch.mock.calls[1]?.[1]?.body).toBe('{"chargeSessionId":"session-1"}');
+  });
+});
+
+describe("GreenfluxApiClient response handling", () => {
+  it("accepts an accepted-but-not-200 command response", async () => {
+    const fetch = vi.fn<typeof globalThis.fetch>().mockResolvedValue(
+      new Response('{"result":"ACCEPTED"}', { status: 202 }),
+    );
+    const client = new RemoteCommandsClient({ baseUrl: "https://example.test", token: "t", fetch });
+
+    await expect(client.startSession({ location_id: "loc" })).resolves.toMatchObject({ result: "ACCEPTED" });
+  });
+
+  it("keeps an empty JSON array rather than collapsing it to undefined", async () => {
+    const fetch = vi.fn<typeof globalThis.fetch>().mockResolvedValue(new Response("[]", { status: 200 }));
+    const client = new ChargeAssistClient({ baseUrl: "https://example.test", apiKey: "key", fetch });
+
+    await expect(client.get("anything")).resolves.toEqual([]);
+  });
+
+  it("treats 204 and an empty body as no payload", async () => {
+    const fetch = vi.fn<typeof globalThis.fetch>()
+      .mockResolvedValueOnce(new Response(null, { status: 204 }))
+      .mockResolvedValueOnce(new Response("", { status: 200 }));
+    const client = new ChargeAssistClient({ baseUrl: "https://example.test", apiKey: "key", fetch });
+
+    await expect(client.get("anything")).resolves.toBeUndefined();
+    await expect(client.get("anything")).resolves.toBeUndefined();
   });
 });

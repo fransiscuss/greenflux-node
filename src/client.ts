@@ -39,7 +39,7 @@ export class GreenfluxApiClient {
     if (!options.baseUrl) throw new Error("Greenflux client requires a baseUrl.");
     this.baseUrl = `${options.baseUrl.replace(/\/+$/, "")}/`;
     this.fetchImplementation = options.fetch ?? globalThis.fetch;
-    if (!this.fetchImplementation) throw new Error("No fetch implementation is available; use Node.js 18+ or provide options.fetch.");
+    if (!this.fetchImplementation) throw new Error("No fetch implementation is available; use Node.js 20+ or provide options.fetch.");
 
     this.defaults = new Headers(options.headers);
     this.defaults.set("accept", "application/json");
@@ -103,7 +103,7 @@ export class GreenfluxApiClient {
     if (response.status === 204 || responseBody.length === 0) return undefined as unknown as T;
     try {
       return JSON.parse(responseBody) as T;
-    } catch (error) {
+    } catch {
       throw new GreenfluxApiError(
         `Greenflux API returned invalid JSON for ${method} ${url.pathname}.`,
         response.status,
