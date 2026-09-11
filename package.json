@@ -1,6 +1,6 @@
 {
   "name": "@fransiscuss/greenflux",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Unofficial TypeScript client for the Greenflux CPMS APIs.",
   "license": "MIT",
   "author": "Fransiscus Setiawan",
