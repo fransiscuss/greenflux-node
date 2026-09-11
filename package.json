@@ -3,7 +3,10 @@
   "version": "0.3.0",
   "description": "Unofficial TypeScript client for the Greenflux CPMS APIs.",
   "license": "MIT",
-  "author": "Fransiscus Setiawan",
+  "author": {
+    "name": "Fransiscus Setiawan",
+    "url": "https://fransiscuss.com"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/fransiscuss/greenflux-node.git"
