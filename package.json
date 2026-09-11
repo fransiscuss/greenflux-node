@@ -33,6 +33,7 @@
   },
   "files": [
     "dist",
+    "examples",
     "README.md",
     "LICENSE"
   ],
@@ -45,6 +46,7 @@
     "test": "vitest run",
     "integration": "tsx examples/integration-harness.ts",
     "smoke": "tsx examples/cpms-smoke-test.ts",
+    "example:charge-assist": "npm run build && tsx examples/charge-assist-session.ts",
     "prepack": "npm run build",
     "verify": "npm run check && npm test && npm run integration && npm pack --dry-run"
   },

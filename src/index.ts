@@ -4,4 +4,4 @@ export { GreenfluxApiClient, type FetchImplementation, type GreenfluxClientOptio
 export { GreenfluxApiError } from "./errors.js";
 export { GreenfluxPlatformClient } from "./platform.js";
 export { RemoteCommandsClient } from "./remote-commands.js";
-export type { ApiEnvelope, CommandResult, Connector, Evse, JsonObject, JsonPrimitive, JsonValue, Location, RemoteCommandResponse, StartSessionRequest, StartSessionResponse } from "./types.js";
+export type { ApiEnvelope, CommandResult, Connector, Evse, JsonObject, JsonPrimitive, JsonValue, Location, PaymentMethod, RemoteCommandResponse, SessionStatus, StartSessionRequest, StartSessionResponse, WalletResponse } from "./types.js";

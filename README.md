@@ -36,6 +36,16 @@ const locations = await platform.getCpoLocations("2.0", { limit: 10 });
 
 All clients expose `get`, `post`, `put`, `patch`, and `delete` for APIs not yet wrapped by a convenience method. Non-2xx responses throw `GreenfluxApiError`, which contains `status`, `response`, and response `headers`.
 
+## Live Charge Assist example
+
+[`examples/charge-assist-session.ts`](examples/charge-assist-session.ts) demonstrates a real start → status → stop flow. It is safe by default: without `--run-live`, it performs only a read-only location request. Set the `GREENFLUX_CHARGE_ASSIST_*`, `GREENFLUX_APP_TOKEN`, `GREENFLUX_LOCATION_ID`, `GREENFLUX_EVSE_UID`, and `GREENFLUX_PAYMENT_METHOD_ID` environment variables before using it.
+
+```bash
+npm run example:charge-assist -- --run-live
+```
+
+Use a dedicated test tenant/station. This command can start a physical charging session and incur costs.
+
 ## Integration checks
 
 The local harness starts a real HTTP server and verifies request paths, repeated query parameters, authentication, JSON payloads, and error handling without Greenflux credentials:

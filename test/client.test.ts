@@ -24,4 +24,17 @@ describe("GreenfluxApiClient", () => {
       response: '{"error":"nope"}',
     });
   });
+
+  it("maps Charge Assist session status and stop operations", async () => {
+    const fetch = vi.fn<typeof globalThis.fetch>()
+      .mockResolvedValueOnce(new Response('{"status":"CHARGING"}', { status: 200 }))
+      .mockResolvedValueOnce(new Response('{"status":"STOPPING"}', { status: 200 }));
+    const client = new ChargeAssistClient({ baseUrl: "https://example.test/ca/", fetch });
+
+    await expect(client.getSessionStatus("app-token", "session-1", 15)).resolves.toMatchObject({ status: "CHARGING" });
+    await expect(client.stopSession("app-token", { chargeSessionId: "session-1" })).resolves.toMatchObject({ status: "STOPPING" });
+
+    expect(String(fetch.mock.calls[0]?.[0])).toContain("session/status?appToken=app-token&chargeSessionId=session-1&maxDataPoints=15");
+    expect(fetch.mock.calls[1]?.[1]?.body).toBe('{"chargeSessionId":"session-1"}');
+  });
 });

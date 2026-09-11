@@ -10,5 +10,6 @@
     "skipLibCheck": true,
     "noUncheckedIndexedAccess": true
   },
-  "include": ["src", "examples", "test"]
+  "include": ["src", "examples/integration-harness.ts", "examples/cpms-smoke-test.ts", "test"],
+  "exclude": ["local-test"]
 }

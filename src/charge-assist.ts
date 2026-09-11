@@ -1,5 +1,6 @@
 import { GreenfluxApiClient, type GreenfluxClientOptions, type QueryParameters, type RequestOptions } from "./client.js";
-import type { JsonObject, Location, StartSessionRequest, StartSessionResponse } from "./types.js";
+import { GreenfluxApiError } from "./errors.js";
+import type { JsonObject, Location, PaymentMethod, SessionStatus, StartSessionRequest, StartSessionResponse, WalletResponse } from "./types.js";
 
 export interface LocationFilters extends QueryParameters {
   "filter.evseUid"?: string;
@@ -41,11 +42,47 @@ export class ChargeAssistClient extends GreenfluxApiClient {
     });
   }
 
+  public getAppToken(appToken: string, options?: RequestOptions): Promise<JsonObject> {
+    return this.get(`v2.1/token/${encodeURIComponent(appToken)}`, options);
+  }
+
+  /** Returns null only when the app token does not exist (HTTP 404). */
+  public async tryGetAppToken(appToken: string, options?: RequestOptions): Promise<JsonObject | null> {
+    try {
+      return await this.getAppToken(appToken, options);
+    } catch (error) {
+      if (error instanceof GreenfluxApiError && error.status === 404) return null;
+      throw error;
+    }
+  }
+
+  public createAppToken(body: JsonObject, options?: RequestOptions): Promise<JsonObject> {
+    return this.post("v2.1/token", body, options);
+  }
+
+  /** Returns null only when the wallet does not exist (HTTP 404). */
+  public async tryGetWallet(appToken: string, locationId?: string, options?: RequestOptions): Promise<WalletResponse | null> {
+    try {
+      return await this.get(`payment/${encodeURIComponent(appToken)}/wallet`, { ...options, query: { locationId } });
+    } catch (error) {
+      if (error instanceof GreenfluxApiError && error.status === 404) return null;
+      throw error;
+    }
+  }
+
+  public addExternalPaymentMethod(appToken: string, body: JsonObject, options?: RequestOptions): Promise<PaymentMethod> {
+    return this.put(`payment/${encodeURIComponent(appToken)}/external`, body, options);
+  }
+
   public startSession(appToken: string, body: StartSessionRequest, options?: RequestOptions): Promise<StartSessionResponse> {
     return this.post("session/start", body, { ...options, query: { appToken } });
   }
 
-  public stopSession(appToken: string, body: JsonObject, options?: RequestOptions): Promise<undefined> {
-    return this.post("session/stop", body, { ...options, query: { appToken } }).then(() => undefined);
+  public stopSession(appToken: string, body: JsonObject, options?: RequestOptions): Promise<SessionStatus> {
+    return this.post("session/stop", body, { ...options, query: { appToken } });
+  }
+
+  public getSessionStatus(appToken: string, chargeSessionId: string, maxDataPoints?: number, options?: RequestOptions): Promise<SessionStatus> {
+    return this.get("session/status", { ...options, query: { appToken, chargeSessionId, maxDataPoints } });
   }
 }

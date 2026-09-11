@@ -43,6 +43,29 @@ export interface StartSessionResponse extends JsonObject {
   nextStatusCall?: string;
 }
 
+export interface SessionStatus extends JsonObject {
+  sessionId?: string;
+  status?: string;
+  error?: string;
+  errorMessage?: string;
+  energyInKwh?: number;
+  currentPowerInKw?: number;
+  totalCosts?: number;
+  currency?: string;
+  nextStatusCall?: string;
+}
+
+export interface PaymentMethod extends JsonObject {
+  id?: string;
+  externalPaymentMethodId?: string;
+  displayName?: string;
+  isValid?: boolean;
+}
+
+export interface WalletResponse extends JsonObject {
+  data?: PaymentMethod[];
+}
+
 export interface RemoteCommandResponse extends JsonObject {
   result?: string;
   charge_station_notification_id?: string;
