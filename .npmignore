@@ -1,0 +1,8 @@
+.github/
+examples/
+test/
+src/
+release-please-config.json
+.release-please-manifest.json
+tsconfig.json
+vitest.config.ts
