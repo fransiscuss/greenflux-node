@@ -43,7 +43,7 @@ All clients expose `get`, `post`, `put`, `patch`, and `delete` for APIs not yet 
 
 ## Live Charge Assist example
 
-The examples live in the repository rather than in the published package; clone the repo to run them. [`examples/charge-assist-session.ts`](examples/charge-assist-session.ts) demonstrates a real start → status → stop flow. It is safe by default: without `--run-live`, it performs only a read-only location request. Set the `GREENFLUX_CHARGE_ASSIST_*`, `GREENFLUX_APP_TOKEN`, `GREENFLUX_LOCATION_ID`, `GREENFLUX_EVSE_UID`, and `GREENFLUX_PAYMENT_METHOD_ID` environment variables before using it.
+The examples live in the repository rather than in the published package; clone the repo to run them. [`examples/charge-assist-session.ts`](https://github.com/fransiscuss/greenflux-node/blob/main/examples/charge-assist-session.ts) demonstrates a real start → status → stop flow. It is safe by default: without `--run-live`, it performs only a read-only location request. Set the `GREENFLUX_CHARGE_ASSIST_*`, `GREENFLUX_APP_TOKEN`, `GREENFLUX_LOCATION_ID`, `GREENFLUX_EVSE_UID`, and `GREENFLUX_PAYMENT_METHOD_ID` environment variables before using it.
 
 ```bash
 npm run example:charge-assist -- --run-live
