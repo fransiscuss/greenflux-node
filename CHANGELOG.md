@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.0](https://github.com/fransiscuss/greenflux-node/compare/v0.3.0...v1.0.0) (2026-09-12)
+
+
+### ⚠ BREAKING CHANGES
+
+* stop publishing broken examples and test every supported runtime ([#14](https://github.com/fransiscuss/greenflux-node/issues/14))
+
+### Bug Fixes
+
+* stop publishing broken examples and test every supported runtime ([#14](https://github.com/fransiscuss/greenflux-node/issues/14)) ([b618630](https://github.com/fransiscuss/greenflux-node/commit/b618630cc7cc592fe0f50d21f4919a9df21d072a))
+
 ## [0.3.0](https://github.com/fransiscuss/greenflux-node/compare/v0.2.0...v0.3.0) (2026-09-11)
 
 
