@@ -16,11 +16,19 @@ concurrency:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Every current Node.js major the `engines` range admits. Keep this in
+        # step with `engines.node` in package.json: a major that is supported but
+        # untested is a claim CI cannot back.
+        node-version: [20, 22, 24, 26]
+    name: verify (node ${{ matrix.node-version }})
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
         with:
-          node-version: 20
+          node-version: ${{ matrix.node-version }}
           cache: npm
       - run: npm ci
       - run: npm run check
@@ -29,3 +37,16 @@ jobs:
         run: npm run integration
       - name: Verify npm package contents
         run: npm pack --dry-run
+
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      # Dependabot handles routine bumps; this fails the build on a known
+      # high-severity advisory in the dependency tree.
+      - run: npm audit --audit-level=high
