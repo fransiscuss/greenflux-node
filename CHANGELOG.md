@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/fransiscuss/greenflux-node/compare/v1.0.0...v2.0.0) (2026-09-22)
+
+
+### ⚠ BREAKING CHANGES
+
+* type each Greenflux API from its OpenAPI models ([#16](https://github.com/fransiscuss/greenflux-node/issues/16))
+
+### Features
+
+* type each Greenflux API from its OpenAPI models ([#16](https://github.com/fransiscuss/greenflux-node/issues/16)) ([8ef163d](https://github.com/fransiscuss/greenflux-node/commit/8ef163d7d1805a1d64ccd8c60e71c06cb7807ad4))
+
 ## [1.0.0](https://github.com/fransiscuss/greenflux-node/compare/v0.3.0...v1.0.0) (2026-09-12)
 
 
