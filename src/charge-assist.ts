@@ -1,21 +1,23 @@
-import { GreenfluxApiClient, type GreenfluxClientOptions, type QueryParameters, type RequestOptions } from "./client.js";
+import { GreenfluxApiClient, type GreenfluxClientOptions, type RequestOptions } from "./client.js";
 import { GreenfluxApiError } from "./errors.js";
-import type { JsonObject, Location, PaymentMethod, SessionStatus, StartSessionRequest, StartSessionResponse, WalletResponse } from "./types.js";
+import type {
+  AppToken,
+  CreateAppTokenRequest,
+  ExternalPaymentMethodRequest,
+  Location,
+  LocationFilters,
+  LocationSearchQuery,
+  LocationSearchResponse,
+  PaymentMethod,
+  SessionStatus,
+  StartSessionRequest,
+  StartSessionResponse,
+  StopSessionRequest,
+  WalletResponse,
+  WalletTariffResponse,
+} from "./types/index.js";
 
-export interface LocationFilters extends QueryParameters {
-  "filter.evseUid"?: string;
-  "filter.appToken"?: string;
-  "filter.isAvailable"?: boolean;
-  "filter.isFavorite"?: boolean;
-  "filter.directPayEnabled"?: boolean;
-  "filter.powerType"?: "AC" | "DC";
-  "filter.connectorType"?: string;
-  "filter.connectorTypes"?: readonly string[];
-  "filter.minKw"?: number;
-  "filter.maxKw"?: number;
-  "filter.restrictedAccess"?: boolean;
-  "filter.country"?: string;
-}
+export type { LocationFilters } from "./types/index.js";
 
 /** Client for the Greenflux Charge Assist API. */
 export class ChargeAssistClient extends GreenfluxApiClient {
@@ -28,26 +30,26 @@ export class ChargeAssistClient extends GreenfluxApiClient {
   }
 
   public getLocationById(id: string, filters?: LocationFilters, options?: RequestOptions): Promise<Location> {
-    return this.get(`locations/${encodeURIComponent(id)}`, { ...options, query: filters });
+    return this.get<Location>(`locations/${encodeURIComponent(id)}`, this.optionsWithQuery(options, filters));
   }
 
-  public searchLocations(q: string, filters?: LocationFilters, options?: RequestOptions): Promise<JsonObject> {
-    return this.get("locations/search", { ...options, query: { q, ...filters } });
+  public searchLocations(q: string, filters?: LocationSearchQuery, options?: RequestOptions): Promise<LocationSearchResponse> {
+    return this.get<LocationSearchResponse>("locations/search", this.optionsWithQuery(options, { q, ...filters }));
   }
 
-  public getTariff(appToken: string, locationId: string, evseUid: string, connectorId?: string, options?: RequestOptions): Promise<JsonObject> {
-    return this.get(`tariff/${encodeURIComponent(appToken)}/evse/${encodeURIComponent(locationId)}/${encodeURIComponent(evseUid)}`, {
+  public getTariff(appToken: string, locationId: string, evseUid: string, connectorId?: string, options?: RequestOptions): Promise<WalletTariffResponse> {
+    return this.get<WalletTariffResponse>(`tariff/${encodeURIComponent(appToken)}/evse/${encodeURIComponent(locationId)}/${encodeURIComponent(evseUid)}`, {
       ...options,
       query: { connectorId },
     });
   }
 
-  public getAppToken(appToken: string, options?: RequestOptions): Promise<JsonObject> {
-    return this.get(`v2.1/token/${encodeURIComponent(appToken)}`, options);
+  public getAppToken(appToken: string, options?: RequestOptions): Promise<AppToken> {
+    return this.get<AppToken>(`v2.1/token/${encodeURIComponent(appToken)}`, options);
   }
 
   /** Returns null only when the app token does not exist (HTTP 404). */
-  public async tryGetAppToken(appToken: string, options?: RequestOptions): Promise<JsonObject | null> {
+  public async tryGetAppToken(appToken: string, options?: RequestOptions): Promise<AppToken | null> {
     try {
       return await this.getAppToken(appToken, options);
     } catch (error) {
@@ -56,33 +58,33 @@ export class ChargeAssistClient extends GreenfluxApiClient {
     }
   }
 
-  public createAppToken(body: JsonObject, options?: RequestOptions): Promise<JsonObject> {
-    return this.post("v2.1/token", body, options);
+  public createAppToken(body: CreateAppTokenRequest, options?: RequestOptions): Promise<AppToken> {
+    return this.post<AppToken>("v2.1/token", body, options);
   }
 
   /** Returns null only when the wallet does not exist (HTTP 404). */
   public async tryGetWallet(appToken: string, locationId?: string, options?: RequestOptions): Promise<WalletResponse | null> {
     try {
-      return await this.get(`payment/${encodeURIComponent(appToken)}/wallet`, { ...options, query: { locationId } });
+      return await this.get<WalletResponse>(`payment/${encodeURIComponent(appToken)}/wallet`, { ...options, query: { locationId } });
     } catch (error) {
       if (error instanceof GreenfluxApiError && error.status === 404) return null;
       throw error;
     }
   }
 
-  public addExternalPaymentMethod(appToken: string, body: JsonObject, options?: RequestOptions): Promise<PaymentMethod> {
-    return this.put(`payment/${encodeURIComponent(appToken)}/external`, body, options);
+  public addExternalPaymentMethod(appToken: string, body: ExternalPaymentMethodRequest, options?: RequestOptions): Promise<PaymentMethod> {
+    return this.put<PaymentMethod>(`payment/${encodeURIComponent(appToken)}/external`, body, options);
   }
 
   public startSession(appToken: string, body: StartSessionRequest, options?: RequestOptions): Promise<StartSessionResponse> {
-    return this.post("session/start", body, { ...options, query: { appToken } });
+    return this.post<StartSessionResponse>("session/start", body, { ...options, query: { appToken } });
   }
 
-  public stopSession(appToken: string, body: JsonObject, options?: RequestOptions): Promise<SessionStatus> {
-    return this.post("session/stop", body, { ...options, query: { appToken } });
+  public stopSession(appToken: string, body: StopSessionRequest, options?: RequestOptions): Promise<SessionStatus> {
+    return this.post<SessionStatus>("session/stop", body, { ...options, query: { appToken } });
   }
 
   public getSessionStatus(appToken: string, chargeSessionId: string, maxDataPoints?: number, options?: RequestOptions): Promise<SessionStatus> {
-    return this.get("session/status", { ...options, query: { appToken, chargeSessionId, maxDataPoints } });
+    return this.get<SessionStatus>("session/status", { ...options, query: { appToken, chargeSessionId, maxDataPoints } });
   }
 }

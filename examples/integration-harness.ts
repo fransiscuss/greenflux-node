@@ -51,11 +51,11 @@ try {
     location_id: "loc-1",
     evse_uid: "evse-1",
     chargestation_id: "cs-1",
-    token: { uid: "token-uid", type: "RFID", valid: true },
+    token: { uid: "token-uid", auth_id: "auth-1", type: "RFID", valid: true },
   });
   assert.equal(command.result, "ACCEPTED");
   assert.equal(requests[1]?.headers.authorization, "Token harness-token");
-  assert.equal(requests[1]?.body, '{"location_id":"loc-1","evse_uid":"evse-1","chargestation_id":"cs-1","token":{"uid":"token-uid","type":"RFID","valid":true}}');
+  assert.equal(requests[1]?.body, '{"location_id":"loc-1","evse_uid":"evse-1","chargestation_id":"cs-1","token":{"uid":"token-uid","auth_id":"auth-1","type":"RFID","valid":true}}');
 
   await assert.rejects(
     () => chargeAssist.getLocationById("missing"),

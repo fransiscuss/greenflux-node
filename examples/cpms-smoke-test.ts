@@ -10,13 +10,11 @@ const client = new GreenfluxPlatformClient({ baseUrl, token });
 const locationId = process.env.GREENFLUX_LOCATION_ID;
 
 if (locationId) {
-  const response = await client.get<ApiResponse>(`api/2.0/cpolocations/${encodeURIComponent(locationId)}`);
-  const location = Array.isArray(response.data) ? response.data[0] : response.data;
-  console.log(`Retrieved location ${location?.id ?? locationId}.`);
+  const response = await client.getCpoLocation("2.0", locationId);
+  const location = response.data;
+  console.log(`Retrieved location ${location?.id ?? locationId} (${location?.city ?? "city unknown"}, ${location?.evses?.length ?? 0} EVSE(s)).`);
 } else {
-  const response = await client.get<ApiResponse>("api/2.0/cpolocations", { query: { limit: 1 } });
-  const locations = Array.isArray(response.data) ? response.data : response.data ? [response.data] : [];
+  const response = await client.getCpoLocations("2.0", { limit: 1 });
+  const locations = response.data ?? [];
   console.log(`CPMS connectivity verified; received ${locations.length} location(s).`);
 }
-
-type ApiResponse = { data?: { id?: string }[] | { id?: string } };
