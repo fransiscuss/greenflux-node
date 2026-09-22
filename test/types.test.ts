@@ -4,7 +4,9 @@ import type {
   CreateManagedLocationRequest,
   EvseStatus,
   Location,
+  ManagedLocationByIdQuery,
   RemoteStartSessionRequest,
+  RemoteStopSessionRequest,
   SessionStatus,
   StartSessionRequest,
 } from "../src/index.js";
@@ -28,6 +30,16 @@ describe("strong request types", () => {
       token: { uid: "token", auth_id: "auth", valid: true, type: "RFID" },
     } satisfies RemoteStartSessionRequest;
     expect(command.token.auth_id).toBe("auth");
+  });
+
+  it("requires a remote stop session id", () => {
+    const command = { session_id: "session-1" } satisfies RemoteStopSessionRequest;
+    expect(command.session_id).toBe("session-1");
+  });
+
+  it("exposes the charge-location by-id query from the package root", () => {
+    const query = { excludeEvses: true } satisfies ManagedLocationByIdQuery;
+    expect(query.excludeEvses).toBe(true);
   });
 
   it("accepts a managed location create body", () => {
@@ -86,3 +98,13 @@ const badRemote: RemoteStartSessionRequest = {
   },
 };
 void badRemote;
+
+// @ts-expect-error session_id is required to stop a remote session
+const missingStop: RemoteStopSessionRequest = {};
+void missingStop;
+
+const nullStop: RemoteStopSessionRequest = {
+  // @ts-expect-error session_id cannot be null
+  session_id: null,
+};
+void nullStop;

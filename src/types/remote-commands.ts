@@ -38,7 +38,8 @@ export interface RemoteStartSessionRequest {
 }
 
 export interface RemoteStopSessionRequest {
-  session_id?: string | null;
+  /** Required to identify the session. The published schema marks this nullable, but a stop command cannot be sent without it. */
+  session_id: string;
 }
 
 export interface RemoteUnlockConnectorRequest {

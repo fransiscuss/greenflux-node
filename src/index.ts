@@ -38,6 +38,7 @@ export type {
   LocationSearchResponse,
   LocationType,
   ManagedLocation,
+  ManagedLocationByIdQuery,
   ManagedLocationQuery,
   ManagedEvse,
   ManagedConnector,
