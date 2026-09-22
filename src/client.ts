@@ -1,5 +1,5 @@
 import { GreenfluxApiError } from "./errors.js";
-import type { JsonObject, JsonValue } from "./types.js";
+import type { JsonValue } from "./types/index.js";
 
 export type QueryValue = string | number | boolean | Date | null | undefined;
 export type QueryParameters = Record<string, QueryValue | readonly QueryValue[]>;
@@ -53,30 +53,35 @@ export class GreenfluxApiClient {
     }
   }
 
-  public get<T extends JsonValue = JsonValue>(path: string, options?: RequestOptions): Promise<T> {
+  public get<T = JsonValue>(path: string, options?: RequestOptions): Promise<T> {
     return this.request<T>("GET", path, undefined, options);
   }
 
-  public post<T extends JsonValue = JsonValue>(path: string, body?: JsonValue, options?: RequestOptions): Promise<T> {
+  public post<T = JsonValue>(path: string, body?: unknown, options?: RequestOptions): Promise<T> {
     return this.request<T>("POST", path, body, options);
   }
 
-  public put<T extends JsonValue = JsonValue>(path: string, body?: JsonValue, options?: RequestOptions): Promise<T> {
+  public put<T = JsonValue>(path: string, body?: unknown, options?: RequestOptions): Promise<T> {
     return this.request<T>("PUT", path, body, options);
   }
 
-  public patch<T extends JsonValue = JsonValue>(path: string, body?: JsonValue, options?: RequestOptions): Promise<T> {
+  public patch<T = JsonValue>(path: string, body?: unknown, options?: RequestOptions): Promise<T> {
     return this.request<T>("PATCH", path, body, options);
   }
 
-  public delete<T extends JsonValue = JsonValue>(path: string, options?: RequestOptions): Promise<T> {
+  public delete<T = JsonValue>(path: string, options?: RequestOptions): Promise<T> {
     return this.request<T>("DELETE", path, undefined, options);
   }
 
-  private async request<T extends JsonValue>(
+  /** Typed query objects have no index signature, so they are cast at this boundary. */
+  protected optionsWithQuery(options: RequestOptions | undefined, query: object | undefined): RequestOptions {
+    return { ...options, query: query as QueryParameters | undefined };
+  }
+
+  private async request<T>(
     method: string,
     path: string,
-    body: JsonValue | undefined,
+    body: unknown,
     options: RequestOptions | undefined,
   ): Promise<T> {
     const url = new URL(path.replace(/^\/+/, ""), this.baseUrl);
@@ -125,4 +130,3 @@ export class GreenfluxApiClient {
   }
 }
 
-export type RequestBody = JsonObject | JsonValue[];

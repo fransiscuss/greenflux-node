@@ -35,7 +35,10 @@ const location = await chargeAssist.getLocationById("your-location-id", {
   "filter.powerType": "DC",
 });
 const locations = await platform.getCpoLocations("2.0", { limit: 10 });
+const first = locations.data?.[0];
 ```
+
+Charge Assist objects use the camelCase names from the Charge Assist OpenAPI document (`location.evses`, `connector.powerType`, `session.status`). Platform and charge-location objects use the snake_case names from their OpenAPI documents (`location.postal_code`, `connector.power_type`). Request bodies require the documented fields and reject unknown properties. `Location` is the Charge Assist location; platform locations are `PlatformLocation`, and charge-location management locations are `ManagedLocation`.
 
 `ChargeAssistClient` defaults to the gateway header `Ocp-Apim-Subscription-Key`. For an endpoint requiring the OpenAPI-style `Authorization: ApiKey …` header, set `chargeAssistAuthentication: "authorization-api-key"`.
 

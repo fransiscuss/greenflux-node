@@ -46,7 +46,12 @@ describe("GreenfluxApiClient response handling", () => {
     );
     const client = new RemoteCommandsClient({ baseUrl: "https://example.test", token: "t", fetch });
 
-    await expect(client.startSession({ location_id: "loc" })).resolves.toMatchObject({ result: "ACCEPTED" });
+    await expect(client.startSession({
+      location_id: "loc",
+      evse_uid: "evse",
+      chargestation_id: "cs",
+      token: { uid: "token-uid", auth_id: "auth", valid: true, type: "RFID" },
+    })).resolves.toMatchObject({ result: "ACCEPTED" });
   });
 
   it("keeps an empty JSON array rather than collapsing it to undefined", async () => {
